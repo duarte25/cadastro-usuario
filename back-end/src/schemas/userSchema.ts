@@ -1,16 +1,17 @@
 import { z } from 'zod';
 
-// Schema para criação de usuário. Todos os campos são obrigatórios.
 export const createUserSchema = z.object({
-  nome: z.string().min(3, "O nome deve ter no mínimo 3 caracteres."),
+  firstName: z.string().min(1, "O nome é obrigatório."),
+  lastName: z.string().min(1, "O sobrenome é obrigatório."),
   email: z.string().email("Formato de e-mail inválido."),
-  telefone: z.string().optional(),
-  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres."),
+  isActive: z.boolean().default(true),
+  profileId: z.string().uuid("O ID do perfil deve ser um UUID válido."),
 });
 
-// Schema para atualização de usuário. Todos os campos são opcionais.
 export const updateUserSchema = z.object({
-  nome: z.string().min(3, "O nome deve ter no mínimo 3 caracteres.").optional(),
+  firstName: z.string().min(1, "O nome é obrigatório.").optional(),
+  lastName: z.string().min(1, "O sobrenome é obrigatório.").optional(),
   email: z.string().email("Formato de e-mail inválido.").optional(),
-  telefone: z.string().optional(),
+  isActive: z.boolean().optional(),
+  profileId: z.string().uuid("O ID do perfil deve ser um UUID válido.").optional(),
 });

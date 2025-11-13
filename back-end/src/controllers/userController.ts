@@ -16,8 +16,8 @@ export default class UserController {
       pagina,
       limite,
       nome: req.query.nome as string | undefined,
-      telefone: req.query.telefone as string | undefined,
-      email: req.query.email as string | undefined
+      email: req.query.email as string | undefined,
+      profileId: req.query.profileId as string | undefined
     };
 
     // Chamar o serviço para listar os usuários

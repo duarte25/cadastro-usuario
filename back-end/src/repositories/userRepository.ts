@@ -1,38 +1,35 @@
 import { CreateUserData, ListUserParams, User } from '../interfaces/user';
+import { profiles } from './profileRepository';
 import { v4 as uuidv4 } from 'uuid';
 
+const adminProfile = profiles.find(p => p.name === 'Admin');
+const userProfile = profiles.find(p => p.name === 'User');
+const managerProfile = profiles.find(p => p.name === 'Manager');
+
 let users: User[] = [
-  { id: uuidv4(), nome: 'João da Silva', email: 'joao.silva@example.com', telefone: '11987654321' },
-  { id: uuidv4(), nome: 'Maria Oliveira', email: 'maria.oliveira@example.com', telefone: '21987654322' },
-  { id: uuidv4(), nome: 'Carlos Pereira', email: 'carlos.pereira@example.com', telefone: '31987654323' },
-  { id: uuidv4(), nome: 'Ana Costa', email: 'ana.costa@example.com', telefone: '41987654324' },
-  { id: uuidv4(), nome: 'Pedro Santos', email: 'pedro.santos@example.com', telefone: '51987654325' },
-  { id: uuidv4(), nome: 'Sofia Lima', email: 'sofia.lima@example.com', telefone: '61987654326' },
-  { id: uuidv4(), nome: 'Lucas Souza', email: 'lucas.souza@example.com', telefone: '71987654327' },
-  { id: uuidv4(), nome: 'Laura Fernandes', email: 'laura.fernandes@example.com', telefone: '81987654328' },
-  { id: uuidv4(), nome: 'Mateus Rodrigues', email: 'mateus.rodrigues@example.com', telefone: '91987654329' },
-  { id: uuidv4(), nome: 'Isabela Almeida', email: 'isabela.almeida@example.com', telefone: '11987654330' },
-  { id: uuidv4(), nome: 'Gabriel Martins', email: 'gabriel.martins@example.com', telefone: '21987654331' },
-  { id: uuidv4(), nome: 'Valentina Gomes', email: 'valentina.gomes@example.com', telefone: '31987654332' },
-  { id: uuidv4(), nome: 'Enzo Ribeiro', email: 'enzo.ribeiro@example.com', telefone: '41987654333' },
-  { id: uuidv4(), nome: 'Helena Carvalho', email: 'helena.carvalho@example.com', telefone: '51987654334' },
-  { id: uuidv4(), nome: 'Miguel Castro', email: 'miguel.castro@example.com', telefone: '61987654335' },
+  { id: uuidv4(), firstName: 'João', lastName: 'da Silva', email: 'joao.silva@example.com', isActive: true, profileId: adminProfile!.id },
+  { id: uuidv4(), firstName: 'Maria', lastName: 'Oliveira', email: 'maria.oliveira@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Carlos', lastName: 'Pereira', email: 'carlos.pereira@example.com', isActive: false, profileId: managerProfile!.id },
+  { id: uuidv4(), firstName: 'Ana', lastName: 'Costa', email: 'ana.costa@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Pedro', lastName: 'Santos', email: 'pedro.santos@example.com', isActive: true, profileId: userProfile!.id },
 ];
 
 export class UserRepository {
   static async list(params: ListUserParams): Promise<{ data: User[]; total: number }> {
-    const { pagina, limite, nome, telefone, email } = params;
+    const { pagina, limite, nome, email, profileId } = params;
 
     let filteredUsers = [...users];
 
     if (nome) {
-      filteredUsers = filteredUsers.filter(user => user.nome.toLowerCase().includes(nome.toLowerCase()));
-    }
-    if (telefone) {
-      filteredUsers = filteredUsers.filter(user => user.telefone?.includes(telefone));
+      filteredUsers = filteredUsers.filter(user => 
+        `${user.firstName} ${user.lastName}`.toLowerCase().includes(nome.toLowerCase())
+      );
     }
     if (email) {
       filteredUsers = filteredUsers.filter(user => user.email.toLowerCase().includes(email.toLowerCase()));
+    }
+    if (profileId) {
+      filteredUsers = filteredUsers.filter(user => user.profileId === profileId);
     }
 
     const total = filteredUsers.length;

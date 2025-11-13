@@ -1,19 +1,21 @@
 import { createUserSchema, updateUserSchema } from '../schemas/userSchema';
 import { CreateUserData, ListUserParams, User } from '../interfaces/user';
-import { UserRepository } from '../repositories/userRepository'
+import { UserRepository } from '../repositories/userRepository';
+import { ProfileRepository } from '../repositories/profileRepository';
 import { APIError } from '../utils/wrapException';
 import messages from '../utils/message';
-
 
 export class UserService {
   static async listUsers(params: ListUserParams): Promise<{ data: User[]; total: number; pagina: number; limite: number }> {
     const { data, total } = await UserRepository.list(params);
 
-    // O serviço é responsável por remover dados sensíveis antes de devolver ao controller
-    const usersWithoutPasswords = data.map(({ password, ...rest }) => rest as User);
+    const usersWithProfiles = await Promise.all(data.map(async (user) => {
+      const profile = await ProfileRepository.findById(user.profileId);
+      return { ...user, profile };
+    }));
 
     return {
-      data: usersWithoutPasswords,
+      data: usersWithProfiles,
       total,
       pagina: params.pagina,
       limite: params.limite,
@@ -21,22 +23,26 @@ export class UserService {
   }
 
   static async createUser(userData: CreateUserData): Promise<User> {
-
     const validatedData = createUserSchema.safeParse(userData);
 
     if (!validatedData.success) {
       throw new APIError(validatedData.error, 422);
     }
 
-    const existingUser = await UserRepository.findByEmail(validatedData.data.email);
+    const { email, profileId } = validatedData.data;
+
+    const existingUser = await UserRepository.findByEmail(email);
     if (existingUser) {
-      throw new APIError(messages.auth.emailAlreadyExists(validatedData.data.email), 409);
+      throw new APIError(messages.auth.emailAlreadyExists(email), 409);
+    }
+
+    const profile = await ProfileRepository.findById(profileId);
+    if (!profile) {
+      throw new APIError(messages.error.resourceNotFound("Perfil"), 404);
     }
 
     const newUser = await UserRepository.create(validatedData.data);
-
-    const { password, ...userWithoutPassword } = newUser;
-    return userWithoutPassword as User;
+    return newUser as User;
   }
 
   static async findUser(id: string): Promise<User> {
@@ -45,27 +51,35 @@ export class UserService {
       throw new APIError(messages.error.resourceNotFound("usuário"), 404);
     }
 
-    // Remove a senha antes de retornar
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword as User;
+    const profile = await ProfileRepository.findById(user.profileId);
+    return { ...user, profile } as User;
   }
 
   static async alterUser(id: string, updateData: Partial<CreateUserData>): Promise<User> {
     const validatedData = updateUserSchema.safeParse(updateData);
+
+    if (!validatedData.success) {
+      throw new APIError(validatedData.error, 422);
+    }
 
     const currentUser = await UserRepository.findById(id);
     if (!currentUser) {
       throw new APIError(messages.error.resourceNotFound("usuário"), 404);
     }
 
-    if (!validatedData.success) {
-      throw new APIError(validatedData.error, 422);
+    const { email, profileId } = validatedData.data;
+
+    if (email && email !== currentUser.email) {
+      const existingUserWithEmail = await UserRepository.findByEmail(email);
+      if (existingUserWithEmail) {
+        throw new APIError(messages.auth.emailAlreadyExists(email), 409);
+      }
     }
 
-    if (validatedData.data.email && validatedData.data.email !== currentUser.email) {
-      const existingUserWithEmail = await UserRepository.findByEmail(validatedData.data.email);
-      if (existingUserWithEmail) {
-        throw new APIError(messages.auth.emailAlreadyExists(validatedData.data.email), 409);
+    if (profileId) {
+      const profile = await ProfileRepository.findById(profileId);
+      if (!profile) {
+        throw new APIError(messages.error.resourceNotFound("Perfil"), 404);
       }
     }
 
@@ -74,8 +88,7 @@ export class UserService {
       throw new APIError(messages.error.resourceNotFound("usuário"), 404);
     }
 
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword as User;
+    return updatedUser as User;
   }
 
   static async deleteUser(id: string): Promise<{ message: string }> {

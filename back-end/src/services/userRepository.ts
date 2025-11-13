@@ -1,23 +1,23 @@
 import { CreateUserData, ListUserParams, User } from '../interfaces/user';
 import { v4 as uuidv4 } from 'uuid';
 
-// O "banco de dados" em memória agora vive exclusivamente no repositório.
 let users: User[] = [];
 
 export class UserRepository {
   static async list(params: ListUserParams): Promise<{ data: User[]; total: number }> {
-    const { pagina, limite, nome, telefone, email } = params;
+    const { pagina, limite, firstName, email, profileId } = params;
 
     let filteredUsers = [...users];
 
-    if (nome) {
-      filteredUsers = filteredUsers.filter(user => user.nome.toLowerCase().includes(nome.toLowerCase()));
-    }
-    if (telefone) {
-      filteredUsers = filteredUsers.filter(user => user.telefone?.includes(telefone));
+    if (firstName) {
+      filteredUsers = filteredUsers.filter(user => user.firstName.toLowerCase().includes(firstName.toLowerCase()));
     }
     if (email) {
       filteredUsers = filteredUsers.filter(user => user.email.toLowerCase().includes(email.toLowerCase()));
+    }
+
+    if (profileId) {
+      filteredUsers = filteredUsers.filter(user => user.profileId === profileId);
     }
 
     const total = filteredUsers.length;
