@@ -1,5 +1,4 @@
 const messages = {
-  // Mensagens para respostas via rotas da API
   httpCodes: {
     200: "Requisição bem sucedida!",
     201: "Requisição bem sucedida, recurso foi criado!",

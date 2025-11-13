@@ -5,7 +5,6 @@ import { sendResponse } from '../utils/message';
 import { Request, Response } from 'express';
 
 export default class UserController {
-  // Método estático para listar usuários
   static async listUserController(req: Request, res: Response): Promise<any> {
 
     // Extrair parâmetros da query

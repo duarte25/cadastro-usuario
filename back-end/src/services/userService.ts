@@ -1,7 +1,7 @@
 import { createUserSchema, updateUserSchema } from '../schemas/userSchema';
 import { CreateUserData, ListUserParams, User } from '../interfaces/user';
-import { UserRepository } from '../repositories/userRepository';
 import { ProfileRepository } from '../repositories/profileRepository';
+import { UserRepository } from '../repositories/userRepository';
 import { APIError } from '../utils/wrapException';
 import messages from '../utils/message';
 

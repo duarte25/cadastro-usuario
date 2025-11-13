@@ -15,7 +15,7 @@ export type CreateUserData = Omit<User, 'id' | 'profile'>;
 export interface ListUserParams {
   pagina: number;
   limite: number;
-  firstName?: string;
+  nome?: string;
   email?: string;
   profileId?: string;
 }

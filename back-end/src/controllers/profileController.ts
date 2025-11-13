@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { ProfileService } from '../services/profileService';
 import { sendResponse } from '../utils/message';
+import { Request, Response } from 'express';
 
 export default class ProfileController {
   static async listProfilesController(req: Request, res: Response): Promise<any> {

@@ -1,5 +1,5 @@
-import { Profile } from '../interfaces/profile';
 import { ProfileRepository } from '../repositories/profileRepository';
+import { Profile } from '../interfaces/profile';
 
 export class ProfileService {
   static async listProfiles(): Promise<Profile[]> {

@@ -1,6 +1,5 @@
-// Removida a importação do Prisma, pois não é mais necessária.
-import { ZodError } from "zod";
 import { sendError } from "./message";
+import { ZodError } from "zod";
 
 export class APIError extends Error {
   code: number;
@@ -48,9 +47,6 @@ export const wrapException = (fn: Function) => {
         return sendError(res, err.code, err.errors || err.message);
       }
 
-      // Todos os blocos 'else if' e 'if' específicos do Prisma foram removidos.
-
-      // Erro desconhecido (catch-all)
       console.error("Erro não tratado:", err);
       return sendError(res, 500, [err.message || "Erro interno do servidor."]);
     } finally {
