@@ -17,7 +17,7 @@ export default async function User({ searchParams }: { searchParams: any }) {
     <ContainerPageContent>
       <div className="grid sm:flex items-center justify-center sm:justify-between">
         <Title>Usuários</Title>
-        <ButtonLink className="bg-green-fourth" href={"/usuarios/cadastrar"}><CirclePlus /> Novo usuário</ButtonLink>
+        <ButtonLink className="bg-green-800" href={"/usuarios/cadastrar"}><CirclePlus /> Novo usuário</ButtonLink>
       </div>
 
       <FormSearchUser

@@ -45,13 +45,13 @@ export default function Filtros({ route, form, children }: FiltrosProps) {
   return (
     <Form {...form} data-test="form-filtros">
       <form onSubmit={onSubmit}>
-        <section className="w-full p-4 shadow border rounded-md bg-blue-100/10">
+        <section className="w-full p-4 shadow border rounded-md bg-lime-300/10 ">
           <div className="grid grid-cols-1 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 gap-2 text-primaryDark">
             {children}
             <div className="grid items-end justify-self-end cold-end-auto md:col-end-3 xl:col-end-4 mt-2 2xl:col-end-5">
               <ButtonLoading
                 isLoading={isSearching}
-                className="bg-green-seventh"
+                className="bg-green-800"
                 title={"Realizar busca"}
                 data-test="botao-filtrar"
                 size="default"

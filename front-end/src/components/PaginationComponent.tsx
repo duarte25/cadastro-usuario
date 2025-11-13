@@ -95,6 +95,7 @@ export default function PaginationComponent({ maxPageComponent = 3, totalPages, 
         {paginas?.map((pagina) => (
           <PaginationItem key={pagina?.id}>
             <PaginationLink
+            className="bg-lime-300/10"
               data-test={`pagina-${pagina.page}`}
               isActive={pagina.active}
               onClick={() => onPageChange(pagina.page)}
