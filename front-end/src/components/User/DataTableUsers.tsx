@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuIte
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ApiErrorQuery, fetchUseQuery } from "@/api/services/fetchUseQuery";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { handleErrorMessages } from "@/errors/handleErrorMessage";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, MoreHorizontal } from "lucide-react";
@@ -13,7 +14,6 @@ import { User } from "@/api/models/User";
 import { toast } from "react-toastify";
 import IconLink from "../IconLink";
 import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface DataTableUsersProps {
   dados: ApiResponse<User>;
@@ -56,7 +56,7 @@ export default function DataTableUsers({ dados, onUpdate }: DataTableUsersProps)
             <TableHead data-test="coluna-foto">Foto</TableHead>
             <TableHead data-test="coluna-nome">Nome</TableHead>
             <TableHead data-test="coluna-email">E-mail</TableHead>
-            <TableHead data-test="coluna-telefone">Telefone</TableHead>
+            <TableHead data-test="coluna-profile">Profile</TableHead>
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
@@ -72,7 +72,7 @@ export default function DataTableUsers({ dados, onUpdate }: DataTableUsersProps)
                 </TableCell>
                 <TableCell data-test="celula-nome">{user?.firstName}</TableCell>
                 <TableCell data-test="celula-responsavel">{user?.email}</TableCell>
-                <TableCell data-test="celula-responsavel">{user?.isActive}</TableCell>
+                <TableCell data-test="celula-responsavel">{user?.profile?.name}</TableCell>
                 <TableCell data-test="celula-acoes" className="flex items-center space-x-2">
                   <TooltipProvider delayDuration={100}>
                     <Tooltip>

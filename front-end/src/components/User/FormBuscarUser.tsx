@@ -75,7 +75,7 @@ export default function FormSearchUser({
                   id="email"
                   placeholder="E-Mail"
                   value={field.value || ""}
-                  onChange={field.onChange}
+                  onChange={(e) => field.onChange(e.target.value.trim())}
                   onBlur={field.onBlur}
                 />
               </FormControl>
