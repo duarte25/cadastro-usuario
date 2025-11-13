@@ -1,7 +1,6 @@
 import { CreateUserData, ListUserParams, User } from '../interfaces/user';
 import { v4 as uuidv4 } from 'uuid';
 
-// O "banco de dados" em memória agora vive exclusivamente no repositório.
 let users: User[] = [];
 
 export class UserRepository {

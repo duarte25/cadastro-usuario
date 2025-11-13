@@ -1,23 +1,34 @@
 // Removida a importação do Prisma, pois não é mais necessária.
+import { ZodError } from "zod";
 import { sendError } from "./message";
 
 export class APIError extends Error {
   code: number;
   errors?: any[];
 
-  constructor(message: string | any[], code: number = 400, errors?: any[]) {
-    // Se 'message' for um array, mantém como array no campo 'errors'
-    if (Array.isArray(message)) {
-      super("Erro de validação"); // Define uma mensagem genérica para o campo 'message'
-      this.errors = message; // Armazena o array de erros no campo 'errors'
+  constructor(message: string | ZodError | any[], code: number = 400, errors?: any[]) {
+    if (message instanceof ZodError) {
+      // Tratamento específico para ZodError
+      const formatted = message.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+      super("Erro de validação");
+      errors = formatted;
+    } else if (Array.isArray(message)) {
+      // Caso já venha como lista de erros
+      super("Erro de validação");
+      errors = message;
     } else {
-      super(message); // Caso contrário, usa a mensagem diretamente
-      this.errors = errors; // Armazena os erros adicionais, se fornecidos
+      // Erros comuns
+      super(message);
     }
 
-    // Configura o protótipo para que o stack trace funcione corretamente
-    Object.setPrototypeOf(this, new.target.prototype);
     this.code = code;
+    this.errors = errors;
+
+    // Corrige o protótipo
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 

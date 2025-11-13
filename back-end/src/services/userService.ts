@@ -1,4 +1,4 @@
-import { createUserSchema, updateUserPasswordSchema, updateUserSchema } from '../schemas/userSchema';
+import { createUserSchema, updateUserSchema } from '../schemas/userSchema';
 import { CreateUserData, ListUserParams, User } from '../interfaces/user';
 import { UserRepository } from '../repositories/userRepository'
 import { APIError } from '../utils/wrapException';
@@ -21,20 +21,20 @@ export class UserService {
   }
 
   static async createUser(userData: CreateUserData): Promise<User> {
-    // 1. Validação dos dados de entrada com Zod
-    const validatedData = createUserSchema.parse(userData);
 
-    // 2. Regra de negócio: verifica se o e-mail já existe
-    const existingUser = await UserRepository.findByEmail(validatedData.email);
-    if (existingUser) {
-      throw new APIError(messages.auth.emailAlreadyExists(validatedData.email), 409); // 409 Conflict
+    const validatedData = createUserSchema.safeParse(userData);
+
+    if (!validatedData.success) {
+      throw new APIError(validatedData.error, 422);
     }
 
-    // 3. Chama o repositório para criar o usuário
-    // Em uma aplicação real, você faria o hash da senha aqui antes de passar para o repositório
-    const newUser = await UserRepository.create(validatedData);
+    const existingUser = await UserRepository.findByEmail(validatedData.data.email);
+    if (existingUser) {
+      throw new APIError(messages.auth.emailAlreadyExists(validatedData.data.email), 409);
+    }
 
-    // 4. Remove a senha antes de retornar
+    const newUser = await UserRepository.create(validatedData.data);
+
     const { password, ...userWithoutPassword } = newUser;
     return userWithoutPassword as User;
   }
@@ -44,64 +44,36 @@ export class UserService {
     if (!user) {
       throw new APIError(messages.error.resourceNotFound("usuário"), 404);
     }
+
     // Remove a senha antes de retornar
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword as User;
   }
 
   static async alterUser(id: string, updateData: Partial<CreateUserData>): Promise<User> {
-    // 1. Validação dos dados de entrada com Zod
-    const validatedData = updateUserSchema.parse(updateData);
+    const validatedData = updateUserSchema.safeParse(updateData);
 
-    // 2. Regra de negócio: verifica se o usuário existe
     const currentUser = await UserRepository.findById(id);
     if (!currentUser) {
       throw new APIError(messages.error.resourceNotFound("usuário"), 404);
     }
 
-    // 3. Regra de negócio: verifica se o novo e-mail já está em uso por outro usuário
-    if (validatedData.email && validatedData.email !== currentUser.email) {
-      const existingUserWithEmail = await UserRepository.findByEmail(validatedData.email);
+    if (!validatedData.success) {
+      throw new APIError(validatedData.error, 422);
+    }
+
+    if (validatedData.data.email && validatedData.data.email !== currentUser.email) {
+      const existingUserWithEmail = await UserRepository.findByEmail(validatedData.data.email);
       if (existingUserWithEmail) {
-        throw new APIError(messages.auth.emailAlreadyExists(validatedData.email), 409);
+        throw new APIError(messages.auth.emailAlreadyExists(validatedData.data.email), 409);
       }
     }
 
-    // 4. Chama o repositório para atualizar
-    const updatedUser = await UserRepository.update(id, validatedData);
-    if (!updatedUser) {
-      // Isso não deve acontecer por causa da verificação acima, mas é uma boa prática
-      throw new APIError(messages.error.resourceNotFound("usuário"), 404);
-    }
-
-    // 5. Remove a senha antes de retornar
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword as User;
-  }
-
-  static async alterUserPerfil(id: string, updateData: Partial<CreateUserData>): Promise<User> {
-    // Reutiliza a mesma lógica de alteração de usuário
-    return this.alterUser(id, updateData);
-  }
-
-  static async alterUserPassword(id: string, updateData: Partial<CreateUserData>): Promise<User> {
-    // 1. Validação dos dados de entrada com Zod
-    const validatedData = updateUserPasswordSchema.parse(updateData);
-
-    // 2. Regra de negócio: verifica se o usuário existe
-    const userExists = await UserRepository.findById(id);
-    if (!userExists) {
-      throw new APIError(messages.error.resourceNotFound("usuário"), 404);
-    }
-
-    // 3. Chama o repositório para atualizar a senha
-    // Em uma aplicação real, você faria o hash da nova senha aqui
-    const updatedUser = await UserRepository.update(id, { password: validatedData.password });
+    const updatedUser = await UserRepository.update(id, validatedData.data);
     if (!updatedUser) {
       throw new APIError(messages.error.resourceNotFound("usuário"), 404);
     }
 
-    // 4. Remove a senha antes de retornar
     const { password, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword as User;
   }

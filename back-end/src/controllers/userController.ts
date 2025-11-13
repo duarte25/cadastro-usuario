@@ -51,24 +51,6 @@ export default class UserController {
     sendResponse(res, 200, { data: userData });
   }
 
-  static async alterUserPerfil(req: Request, res: Response) {
-    const { id } = req.params;
-    const updateData: Partial<CreateUserData> = { ...req.body };
-
-    const userData = await UserService.alterUserPerfil(id, updateData);
-
-    sendResponse(res, 200, { data: userData });
-  }
-
-  static async alterUserPassword(req: Request, res: Response) {
-    const { id } = req.params;
-    const updateData: Partial<CreateUserData> = { ...req.body };
-
-    const userData = await UserService.alterUserPassword(id, updateData);
-
-    sendResponse(res, 200, { data: userData });
-  }
-
   static async deleteUser(req: Request, res: Response) {
     const { id } = req.params;
 
