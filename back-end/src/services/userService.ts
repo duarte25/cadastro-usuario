@@ -6,7 +6,7 @@ import { APIError } from '../utils/wrapException';
 import messages from '../utils/message';
 
 export class UserService {
-  static async listUsers(params: ListUserParams): Promise<{ data: User[]; total: number; pagina: number; limite: number }> {
+  static async listUsers(params: ListUserParams): Promise<{ data: User[]; total: number; pagina: number; limite: number; totalPaginas: number }> {
     const { data, total } = await UserRepository.list(params);
 
     const usersWithProfiles = await Promise.all(data.map(async (user) => {
@@ -14,11 +14,14 @@ export class UserService {
       return { ...user, profile };
     }));
 
+    const totalPages = Math.ceil(total / params.limite);
+
     return {
       data: usersWithProfiles,
       total,
       pagina: params.pagina,
       limite: params.limite,
+      totalPaginas: totalPages,
     };
   }
 

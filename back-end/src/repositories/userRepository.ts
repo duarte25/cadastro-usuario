@@ -7,11 +7,29 @@ const userProfile = profiles.find(p => p.name === 'User');
 const managerProfile = profiles.find(p => p.name === 'Manager');
 
 let users: User[] = [
-  { id: uuidv4(), firstName: 'João', lastName: 'da Silva', email: 'joao.silva@example.com', isActive: true, profileId: adminProfile!.id },
-  { id: uuidv4(), firstName: 'Maria', lastName: 'Oliveira', email: 'maria.oliveira@example.com', isActive: true, profileId: userProfile!.id },
-  { id: uuidv4(), firstName: 'Carlos', lastName: 'Pereira', email: 'carlos.pereira@example.com', isActive: false, profileId: managerProfile!.id },
-  { id: uuidv4(), firstName: 'Ana', lastName: 'Costa', email: 'ana.costa@example.com', isActive: true, profileId: userProfile!.id },
-  { id: uuidv4(), firstName: 'Pedro', lastName: 'Santos', email: 'pedro.santos@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Marcos', lastName: 'Azevedo', email: 'marcos.azevedo@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Elisa', lastName: 'Farias', email: 'elisa.farias@example.com', isActive: false, profileId: managerProfile!.id },
+  { id: uuidv4(), firstName: 'Tiago', lastName: 'Nogueira', email: 'tiago.nogueira@example.com', isActive: true, profileId: adminProfile!.id },
+  { id: uuidv4(), firstName: 'Larissa', lastName: 'Correia', email: 'larissa.correia@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Renato', lastName: 'Dias', email: 'renato.dias@example.com', isActive: false, profileId: userProfile!.id },
+
+  { id: uuidv4(), firstName: 'Patrícia', lastName: 'Moraes', email: 'patricia.moraes@example.com', isActive: true, profileId: managerProfile!.id },
+  { id: uuidv4(), firstName: 'Felipe', lastName: 'Vieira', email: 'felipe.vieira@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Aline', lastName: 'Rocha', email: 'aline.rocha@example.com', isActive: false, profileId: adminProfile!.id },
+  { id: uuidv4(), firstName: 'Eduardo', lastName: 'Melo', email: 'eduardo.melo@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Simone', lastName: 'Carvalho', email: 'simone.carvalho@example.com', isActive: true, profileId: userProfile!.id },
+
+  { id: uuidv4(), firstName: 'Rodrigo', lastName: 'Borges', email: 'rodrigo.borges@example.com', isActive: false, profileId: managerProfile!.id },
+  { id: uuidv4(), firstName: 'Natália', lastName: 'Araújo', email: 'natalia.araujo@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'André', lastName: 'Batista', email: 'andre.batista@example.com', isActive: true, profileId: adminProfile!.id },
+  { id: uuidv4(), firstName: 'Helena', lastName: 'Ramos', email: 'helena.ramos@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Vitor', lastName: 'Gomes', email: 'vitor.gomes@example.com', isActive: true, profileId: userProfile!.id },
+
+  { id: uuidv4(), firstName: 'Luciana', lastName: 'Ferraz', email: 'luciana.ferraz@example.com', isActive: false, profileId: managerProfile!.id },
+  { id: uuidv4(), firstName: 'Maurício', lastName: 'Monteiro', email: 'mauricio.monteiro@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Beatriz', lastName: 'Assis', email: 'beatriz.assis@example.com', isActive: true, profileId: userProfile!.id },
+  { id: uuidv4(), firstName: 'Fábio', lastName: 'Rezende', email: 'fabio.rezende@example.com', isActive: false, profileId: adminProfile!.id },
+  { id: uuidv4(), firstName: 'Isabela', lastName: 'Tavares', email: 'isabela.tavares@example.com', isActive: true, profileId: userProfile!.id }
 ];
 
 export class UserRepository {
@@ -21,7 +39,7 @@ export class UserRepository {
     let filteredUsers = [...users];
 
     if (nome) {
-      filteredUsers = filteredUsers.filter(user => 
+      filteredUsers = filteredUsers.filter(user =>
         `${user.firstName} ${user.lastName}`.toLowerCase().includes(nome.toLowerCase())
       );
     }
