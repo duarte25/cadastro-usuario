@@ -6,32 +6,27 @@ import ContainerPageContent from "@/components/ContainerPageContentProps";
 import ContainerFormFields from "@/components/ContainerFormFields";
 import ContainerFormFooter from "@/components/ContainerFormFooter";
 import { handleErrorMessages } from "@/errors/handleErrorMessage";
+import actionRevalidateTag from "@/actions/actionRevalidateTag";
 import ContainerFormPage from "@/components/ContainerFormPage";
 import ComboboxDebounce from "@/components/ComboboxDebounce";
 import ButtonLoading from "@/components/ButtonLoading";
-import { useParams, useRouter } from "next/navigation";;
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@/components/ui/separator";
-import { DataContext } from "@/contexts/DataContext";
 import { useMutation } from "@tanstack/react-query";
 import { UserSchemas } from "@/schemas/UserSchemas";
 import { Switch } from "@/components/ui/switch";
 import { Profile } from "@/api/models/Profile";
 import { Input } from "@/components/ui/input";
 import SubTitle from "@/components/SubTitle";
-import { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { User } from "@/api/models/User";
 import { toast } from "react-toastify";
 import Title from "@/components/Title";
+import { useState } from "react";
 import { z } from "zod";
-import actionRevalidateTag from "@/actions/actionRevalidateTag";
 
 export default function EditUserPage() {
-
-  const { slug } = useParams();
-
-  const userData = useContext(DataContext)?.data || null;
 
   const router = useRouter();
 
@@ -41,31 +36,31 @@ export default function EditUserPage() {
   const formUser = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      firstName: userData?.firstName,
-      lastName: userData?.lastName,
-      email: userData?.email,
-      isActive: userData?.isActive,
-      profileId: userData?.profileId,
+      firstName: "",
+      lastName: "",
+      email: "",
+      isActive: false,
+      profileId: "",
     },
   });
 
   // console.log("OLHA O BODY", formUser.getValues())
   // console.log("OLHA O VALOR", estados)
 
-  const [profile, setProfile] = useState<Profile>(userData?.profile);
+  const [profile, setProfile] = useState<Profile>();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: z.infer<typeof schema>) => {
       return await fetchUseQuery<typeof data, User>({
-        route: `/users/${slug}`,
-        method: "PATCH",
+        route: "/users",
+        method: "POST",
         data,
       });
     },
     onSuccess: async () => {
-      await actionRevalidateTag("getUserID");
+      await actionRevalidateTag("getUsers");
       toast.success("Usuário atualizado com sucesso!");
-      router.replace(`/usuarios/${slug}/informacoes`);
+      router.replace("/usuarios");
     },
     onError: (error: ApiErrorQuery) => {
       if (Array.isArray(error.errors)) {
@@ -77,7 +72,7 @@ export default function EditUserPage() {
   return (
     <ContainerPageContent>
       <ContainerFormPage>
-        <Title className="pb-6">Editar Usuário</Title>
+        <Title className="pb-6">Cadastrar Usuário</Title>
         {/* Formulário */}
         <Form {...formUser}>
           <form onSubmit={formUser.handleSubmit((values) => mutate(values))}>
@@ -202,7 +197,7 @@ export default function EditUserPage() {
             <ContainerFormFooter>
               {/* <ButtonLink href="/">Voltar</ButtonLink> */}
               <ButtonLoading isLoading={formUser.formState.isSubmitting} type="submit" >
-                Editar
+                Cadastrar
               </ButtonLoading>
             </ContainerFormFooter>
           </form>

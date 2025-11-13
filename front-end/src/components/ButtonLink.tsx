@@ -51,7 +51,7 @@ export default function ButtonLink({
       variant={variant}
       onClick={() => router.back()}
       size={size}
-      className={cn("flex gap-1 bg-green-fourth", className)}
+      className={cn("flex gap-1 bg-green-800", className)}
       {...props}
     >
       {showIcon && <ArrowLeft className="w-4 h-4" />}

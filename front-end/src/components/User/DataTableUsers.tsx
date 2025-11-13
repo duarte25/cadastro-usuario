@@ -13,6 +13,7 @@ import { User } from "@/api/models/User";
 import { toast } from "react-toastify";
 import IconLink from "../IconLink";
 import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface DataTableUsersProps {
   dados: ApiResponse<User>;
@@ -64,7 +65,10 @@ export default function DataTableUsers({ dados, onUpdate }: DataTableUsersProps)
             dados.map((user: User) => (
               <TableRow key={user?.id} data-test={`linha-board-${user?.id}`}>
                 <TableCell data-test={"tableCellFoto"} className="w-[115px] p-2">
-                  {/* <AvatarImageClient id={user?.foto?.id} className="size-14 rounded-full" /> */}
+                  <Avatar className={"border-x border-green-ninth rounded-full transition-all duration-300 h-12 w-12"}>
+                    <AvatarImage src={"https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} alt={"Usuário"} className="object-cover" />
+                    <AvatarFallback className="rounded-full"></AvatarFallback>
+                  </Avatar>
                 </TableCell>
                 <TableCell data-test="celula-nome">{user?.firstName}</TableCell>
                 <TableCell data-test="celula-responsavel">{user?.email}</TableCell>
@@ -110,7 +114,7 @@ export default function DataTableUsers({ dados, onUpdate }: DataTableUsersProps)
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setOpen(false)}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => userToDelete && mutate(userToDelete?.id)}>Sim, deletar</AlertDialogAction>
+            <AlertDialogAction className="bg-green-800" onClick={() => userToDelete && mutate(userToDelete?.id)}>Sim, deletar</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
