@@ -10,8 +10,10 @@ export type ApiError<T = unknown> = {
     errors: ApiError[] | [];
     message: string;
     data: isArray extends true ? T[] | [] : T;
-  }
-  
+    total?: number;
+    pagina?: number;
+    limite?: number;
+  }  
   export interface FetchApiProps<T> {
     route: string;
     method: "GET" | "POST" | "PATCH" | "DELETE";

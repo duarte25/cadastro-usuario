@@ -91,7 +91,7 @@ export default function GetTableDataComponent<T>({
         <PaginationComponent
           currentPage={currentPage}
           totalPages={(data as any).totalPaginas}
-          onPageChange={(page) => setCurrentPage(page)} // Atualiza o estado interno
+          onPageChange={(pagina) => setCurrentPage(pagina)} 
         />
       )}
     </>
