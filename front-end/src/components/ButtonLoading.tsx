@@ -23,7 +23,7 @@ export default function ButtonLoading({
   return (
     <Button
       disabled={isLoading}
-      className={cn("w-32 bg-green-fourth", className)}
+      className={cn("w-32 bg-green-800", className)}
       type={type}
       size={size}
       {...props}

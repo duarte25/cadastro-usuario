@@ -35,7 +35,7 @@ export default function ButtonLink({
     return (
       <Link
         href={href}
-        className={cn(buttonVariants({ variant, size }), "flex gap-1 bg-green-fourth", className)}
+        className={cn(buttonVariants({ variant, size }), "flex gap-1 bg-green-800", className)}
         {...props}
         replace={true}
       >
