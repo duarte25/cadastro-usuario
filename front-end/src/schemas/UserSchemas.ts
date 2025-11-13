@@ -29,7 +29,8 @@ export class UserSchemas {
   static filtrarUser = z.object({
     _id: z.string(),
     nome: z.string(),
-    email: z.string().email()
+    email: z.string().email(),
+    profileId: z.string()
   });
 
 }

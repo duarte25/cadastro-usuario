@@ -3,9 +3,12 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserSchemas } from "@/schemas/UserSchemas";
+import ComboboxDebounce from "../ComboboxDebounce";
+import { Profile } from "@/api/models/Profile";
 import { Input } from "@/components/ui/input";
 import Filtros from "@/components/Filtros";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import z from "zod";
 
 interface FormBuscarUser {
@@ -30,10 +33,13 @@ export default function FormSearchUser({
       ...querys, // Garantindo que as queries passem para os valores padrão
       nome: querys.nome || "",
       email: querys.email || "",
+      profileId: querys.profileId || "",
     },
   });
 
   const shouldDisplay = (field: string) => !hiddenFields.includes(field);
+
+  const [profile, setProfile] = useState<Profile>();
 
   return (
     <Filtros route={route} form={form}>
@@ -82,6 +88,55 @@ export default function FormSearchUser({
               <FormMessage />
             </FormItem>
           )}
+        />
+      )}
+
+      {shouldDisplay("profileId") && (
+        <FormField
+          control={form.control}
+          name="profileId"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel htmlFor="profileId">Profile</FormLabel>
+                <FormControl>
+                  <ComboboxDebounce
+                    route={"/profiles?nome"}
+                    queryKey="profile"
+                    multipleOption={false}
+                    removeOneOption={true}
+                    placeholderInputSearch={"Busque por profile"}
+                    placeholderUnselected={"Selecione o profile"}
+                    selecionado={profile}
+                    setSelecionado={(value) => {
+                      if (!value) {
+                        field.onChange(null);
+                        setProfile(undefined);
+                        return;
+                      }
+
+                      const body = value as { id: string; name: string };
+                      field.onChange(body.id);
+                      setProfile(body);
+                    }}
+
+                    selectedField={(selecionado) => {
+                      const body = selecionado as unknown as { name: string };
+                      return typeof selecionado === 'string' ? selecionado : body.name || "";
+                    }}
+
+                    visualizacao={profile?.name}
+
+                    renderOption={(dados) => (
+                      <span key={(dados as unknown as { id: string; name: string }).id}>
+                        {typeof dados === 'string' ? dados : dados?.name}
+                      </span>
+                    )}
+                  />
+                </FormControl>
+              </FormItem>
+            );
+          }}
         />
       )}
     </Filtros>
